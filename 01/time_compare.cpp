@@ -12,42 +12,41 @@ void time_compare() {
     double end;
     cout << setw(37) << "Time in ms" << endl;
     cout << setw(4) << "Len" << setw(15) << "Matrix" << setw(15) << "Recursion" << setw(15) << "With cache" << setw(15) << "Domerau" << endl;
-    for (size_t j = 5; j < 15; j += 5) {
+    size_t n = 100000;
+    for (size_t j = 5; j < 10; j += 1) {
         string str1 = string_gen(j), str2 = string_gen(j);
         cout << setw(4) << j;
         start = getCPUTime();
-        for (size_t i = 0; i < 10000; i++) {
-            matr_method(str1, str2);
-        }
-        end = getCPUTime();
-        cout << setw(15) << (end - start) / 10000;
-
-        size_t n = 1;
-        if (j == 5)
-            n = 10000;
-        start = getCPUTime();
         for (size_t i = 0; i < n; i++) {
-            recur_method(str1, str1.length(), str2, str2.length());
+            matr_method(str1, str2);
         }
         end = getCPUTime();
         cout << setw(15) << (end - start) / n;
 
         start = getCPUTime();
-        for (size_t i = 0; i < 10000; i++) {
-            rec_cache_method(str1, str1.length(), str2, str2.length());
+        for (size_t i = 0; i < n / 100; i++) {
+            recur_method(str1, str2);
         }
         end = getCPUTime();
-        cout << setw(15) << (end - start) / 10000;
+        cout << setw(15) << (end - start) / n * 100;
 
         start = getCPUTime();
-        for (size_t i = 0; i < 10000; i++) {
-            Domerau_method(str1, str1.length(), str2, str2.length());
+        for (size_t i = 0; i < n; i++) {
+            rec_cache_method(str1, str2);
         }
         end = getCPUTime();
-        cout << setw(15) << (end - start) / 10000 << endl;
+        cout << setw(15) << (end - start) / n;
+
+        start = getCPUTime();
+        for (size_t i = 0; i < n; i++) {
+            Domerau_method(str1, str2);
+        }
+        end = getCPUTime();
+        cout << setw(15) << (end - start) / n << endl;
     }
-    size_t n = 10000;
-    for (size_t j = 20; j < 60; j += 10) {
+
+    n = 10000;
+    for (size_t j = 10; j < 60; j += 10) {
         string str1 = string_gen(j), str2 = string_gen(j);
         cout << setw(4) << j;
         start = getCPUTime();
@@ -61,14 +60,14 @@ void time_compare() {
 
         start = getCPUTime();
         for (size_t i = 0; i < n; i++) {
-            rec_cache_method(str1, str1.length(), str2, str2.length());
+            rec_cache_method(str1, str2);
         }
         end = getCPUTime();
         cout << setw(15) << (end - start) / n;
 
         start = getCPUTime();
         for (size_t i = 0; i < n; i++) {
-            Domerau_method(str1, str1.length(), str2, str2.length());
+            Domerau_method(str1, str2);
         }
         end = getCPUTime();
         cout << setw(15) << (end - start) / n << endl;

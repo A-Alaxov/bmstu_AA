@@ -23,7 +23,7 @@ size_t matr_method(const string &str1, const string &str2) {
     return result;
 }
 
-size_t recur_method(const string &str1, const size_t len1, const string &str2, const size_t len2) {
+size_t recur(const string &str1, const size_t len1, const string &str2, const size_t len2) {
     if (len1 == len2 && len1 == 0) {
         return 0;
     } else if (len1 == 0) {
@@ -32,10 +32,15 @@ size_t recur_method(const string &str1, const size_t len1, const string &str2, c
         return len1;
     } else {
         bool flag = str1[len1 - 1] != str2[len2 - 1];
-        return min(min(recur_method(str1, len1 - 1, str2, len2) + 1,
-                       recur_method(str1, len1, str2, len2 - 1) + 1),
-                   recur_method(str1, len1 - 1, str2, len2 - 1) + flag);
+        return min(min(recur(str1, len1 - 1, str2, len2) + 1,
+                       recur(str1, len1, str2, len2 - 1) + 1),
+                   recur(str1, len1 - 1, str2, len2 - 1) + flag);
     }
+}
+
+size_t recur_method(const string &str1, const string &str2) {
+    size_t len1 = str1.length(), len2 = str2.length();
+    return recur(str1, len1, str2, len2);
 }
 
 size_t rec_cache(const string &str1, const size_t len1, const string &str2, const size_t len2, size_t **matr) {
@@ -56,7 +61,8 @@ size_t rec_cache(const string &str1, const size_t len1, const string &str2, cons
     return matr[len1][len2];
 }
 
-size_t rec_cache_method(const string &str1, const size_t len1, const string &str2, const size_t len2) {
+size_t rec_cache_method(const string &str1, const string &str2) {
+    size_t len1 = str1.length(), len2 = str2.length();
     auto matr = new size_t *[len1 + 1];
     for (size_t i = 0; i < len1 + 1; i++) {
         matr[i] = new size_t[len2 + 1];
@@ -98,7 +104,8 @@ size_t Domerau(const string &str1, const size_t len1, const string &str2, const 
     return matr[len1][len2];
 }
 
-size_t Domerau_method(const string &str1, const size_t len1, const string &str2, const size_t len2) {
+size_t Domerau_method(const string &str1, const string &str2) {
+    size_t len1 = str1.length(), len2 = str2.length();
     auto matr = new size_t *[len1 + 1];
     for (size_t i = 0; i < len1 + 1; i++) {
         matr[i] = new size_t[len2 + 1];
