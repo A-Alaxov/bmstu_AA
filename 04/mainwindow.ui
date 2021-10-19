@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>924</width>
-    <height>683</height>
+    <height>699</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>520</y>
+      <y>500</y>
       <width>131</width>
       <height>121</height>
      </rect>
@@ -112,7 +112,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>520</y>
+      <y>500</y>
       <width>151</width>
       <height>121</height>
      </rect>
@@ -153,10 +153,10 @@
    <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
-      <x>760</x>
-      <y>520</y>
-      <width>141</width>
-      <height>121</height>
+      <x>600</x>
+      <y>500</y>
+      <width>301</width>
+      <height>151</height>
      </rect>
     </property>
     <property name="title">
@@ -164,10 +164,7 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLineEdit" name="time">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
+      <widget class="QTextEdit" name="time">
        <property name="readOnly">
         <bool>true</bool>
        </property>
@@ -182,34 +179,11 @@
      </item>
     </layout>
    </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>520</y>
-      <width>81</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Задержка в мс:</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="delay_input">
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>520</y>
-      <width>61</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="clear">
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>600</y>
+      <y>580</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -222,7 +196,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>560</y>
+      <y>540</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -235,7 +209,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>520</y>
+      <y>500</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -248,7 +222,7 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>582</y>
+      <y>562</y>
       <width>131</width>
       <height>31</height>
      </rect>
@@ -261,7 +235,7 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>540</y>
+      <y>520</y>
       <width>131</width>
       <height>31</height>
      </rect>
@@ -299,7 +273,4 @@
  </customwidgets>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="buttonGroup"/>
- </buttongroups>
 </ui>

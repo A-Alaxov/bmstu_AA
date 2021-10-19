@@ -24,7 +24,7 @@ public:
     void finish_figure();
     void add_hole();
 
-    void get_time(double &time);
+    void get_time(double &time, size_t th_count, polygon *pol);
 
     void clear();
 
@@ -32,7 +32,6 @@ public:
     void set_fg(const QColor &color);
     void set_paint_col(const QColor &color);
 
-    void set_delay(size_t delay);
     void set_hor();
     void set_ver();
 
@@ -47,8 +46,6 @@ private:
     QColor bg;
     QColor fg;
     QColor paint_col;
-
-    size_t delay = 0;
 
     bool finished = true;
     bool horizontal = false;

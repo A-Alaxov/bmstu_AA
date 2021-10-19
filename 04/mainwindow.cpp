@@ -62,7 +62,6 @@ void MainWindow::on_add_point_button_clicked()
 
 void MainWindow::on_paint_fig_button_clicked()
 {
-    ui->field->set_delay(ui->delay_input->text().toInt());
     ui->field->finish_figure();
 }
 
@@ -80,9 +79,23 @@ void MainWindow::on_time_button_clicked()
 {
     ui->time->clear();
 
+    polygon *pol = new polygon(ui->fg_view->get_color(), ui->paint_view->get_color());
+    for (int i = 0; i < 250; i++) {
+        point *p = new point(rand() % ui->field->width(), rand() % ui->field->height());
+        pol->add_point(p, false, false);
+    }
+    pol->close();
+
+
+
     double time;
-    ui->field->get_time(time);
-    ui->time->insert(QString::number(time) + QString(" сек"));
+    ui->field->get_time(time, 0, pol);
+    ui->time->append(QString("Потоков: 0; Время: ") + QString::number(time) + QString(" сек"));
+    for (size_t th_count = 1; th_count < 32; th_count *= 2) {
+        ui->field->get_time(time, th_count, pol);
+        ui->time->append(QString("Потоков: ") + QString::number(th_count) + QString("; Время: ") + QString::number(time) + QString(" сек"));
+    }
+    delete pol;
 }
 
 void MainWindow::on_vertical_clicked()

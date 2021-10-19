@@ -7,6 +7,7 @@
 #include <QEventLoop>
 #include <mutex>
 #include <Thread>
+#include <QDebug>
 #include "polygon.hpp"
 
 using namespace std;
@@ -44,34 +45,48 @@ void polygon::find_max(int &max) const
             max = p->x;
 }
 
-void polygon::paint_sleep(size_t delay)
+void polygon::find_min(int &min) const
 {
-    QTime end = QTime::currentTime().addMSecs(delay);
-    while (QTime::currentTime() < end)
-    {
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
-    }
+    min = points[0]->x;
+    for (point *p : points)
+        if (p->x < min)
+            min = p->x;
+}
+
+void polygon::find_up(int &up) const
+{
+    up = points[0]->y;
+    for (point *p : points)
+        if (p->y > up)
+            up = p->y;
+}
+
+void polygon::find_down(int &down) const
+{
+    down = points[0]->y;
+    for (point *p : points)
+        if (p->y > down)
+            down = p->y;
 }
 
 mutex mtx;
 
-void polygon::draw_line(int x, int y, int max, QPainter &painter, QImage *image, QColor bg)
+void polygon::draw_line(int x, int y, int max, QImage *image, QColor bg, matrix &buffer)
 {
     while (x < max)
     {
-        mtx.lock();
-        if (image->pixelColor(x, y) == paint_col)
-            painter.setPen(bg);
-        else
-            painter.setPen(paint_col);
-        mtx.unlock();
-
-        painter.drawPoint(x, y);
+        //mtx.lock();
+//        if (image->pixelColor(x, y) == paint_col)
+//            image->setPixelColor(x, y, bg);
+//        else
+//            image->setPixelColor(x, y, paint_col);
+        buffer[y][x] = not buffer[y][x];
+        //mtx.unlock();
         x++;
     }
 }
 
-void polygon::edges_proc(QPainter &painter, QImage *image, size_t delay, QWidget *widget, QColor bg, size_t start, size_t finish, int max)
+void polygon::edges_proc(QImage *image, QColor bg, size_t start, size_t finish, int max, matrix &buffer)
 {
     for (size_t i = start; i < finish; i++)
     {
@@ -98,22 +113,29 @@ void polygon::edges_proc(QPainter &painter, QImage *image, size_t delay, QWidget
 
         while (y != end.y)
         {
-            draw_line(round(x), y, max, painter, image, bg);
-            if (delay)
-            {
-                paint_sleep(delay);
-                widget->update();
-            }
+            draw_line(round(x), y, max, image, bg, buffer);
             x += ctg;
             y += 1;
         }
     }
 }
 
-void polygon::paint(QPainter &painter, QImage *image, size_t delay, QWidget *widget, QColor bg, size_t th_count)
+void polygon::paint(QPainter &painter, QImage *image, QColor bg, size_t th_count)
 {
-    int max;
+    int max, up;
+    //int down, min;
     find_max(max);
+    //find_min(min);
+    find_up(up);
+    //find_down(down);
+
+    auto buffer = vector<vector<bool>>();
+    for (int i = 0; i < up; i++) {
+        buffer.emplace_back(max);
+        for (int j = 0; j < max; j++) {
+            buffer[i][j] = false;
+        }
+    }
 
     size_t edges_for_th = edges.size() / th_count;
     thread *th = new thread[th_count];
@@ -121,77 +143,91 @@ void polygon::paint(QPainter &painter, QImage *image, size_t delay, QWidget *wid
     for (size_t i = 0; i < th_count - 1; i++)
     {
         size_t start = i * edges_for_th, finish = (i + 1) * edges_for_th;
-        th[i] = thread([&painter, image, delay, widget, bg, start, finish, max, this]()
+        th[i] = thread([&image, bg, start, finish, max, this, &buffer]()
                        {
-                           edges_proc(painter, image, delay, widget, bg, start, finish, max);
+                           edges_proc(image, bg, start, finish, max, buffer);
                        });
     }
     th[th_count - 1] = thread([&]()
                    {
-                       edges_proc(painter, image, delay, widget, bg, (th_count - 1) * edges_for_th, edges.size(), max);
+                       edges_proc(image, bg, (th_count - 1) * edges_for_th, edges.size(), max, buffer);
                    });
 
     for (size_t i = 0; i < th_count; i++)
     {
         th[i].join();
     }
-}
+    delete[] th;
 
-void polygon::base(QPainter &painter, QImage *image, size_t delay, QWidget *widget, QColor bg)
-{
-    int max;
-    find_max(max);
-
-    for (edge edge: edges)
-    {
-        point beg(edge.p1), end(edge.p2);
-
-        if (beg.y == end.y)
-            continue;
-
-        if (beg.y > end.y)
-        {
-            int tmp = beg.y;
-            beg.y = end.y;
-            end.y = tmp;
-
-            tmp = beg.x;
-            beg.x = end.x;
-            end.x = tmp;
-        }
-
-        float ctg = (float) (end.x - beg.x) / (end.y - beg.y);
-
-        float x = beg.x;
-        int y = beg.y;
-
-        while (y != end.y)
-        {
-            draw_line(round(x), y, max, painter, image, bg);
-            if (delay)
-            {
-                paint_sleep(delay);
-                widget->update();
+    for (int i = 0; i < up; i++) {
+        for (int j = 0; j < max; j++) {
+            if (buffer[i][j]) {
+                painter.setPen(paint_col);
             }
-            x += ctg;
-            y += 1;
+            else {
+                painter.setPen(bg);
+            }
+            painter.drawPoint(j, i);
         }
     }
 }
 
-double polygon::paint_time(QImage *image)
+void polygon::base(QPainter &painter, QImage *image, QColor bg)
 {
-    int max;
+    int max, up;
+    //int down, min;
     find_max(max);
+    //find_min(min);
+    find_up(up);
+    //find_down(down);
 
-    QImage *img = new QImage(image->size(), QImage::Format_RGBA64);
-    QPainter painter(img);
+    auto buffer = vector<vector<bool>>();
+    for (int i = 0; i < up; i++) {
+        buffer.emplace_back(max);
+        for (int j = 0; j < max; j++) {
+            buffer[i][j] = false;
+        }
+    }
 
-    clock_t clk = clock();
-    paint(painter, img, 0, nullptr, QColor(0, 0, 0), 1);
-    clk = clock() - clk;
+    edges_proc(image, bg, 0, edges.size(), max, buffer);
+    for (int i = 0; i < up; i++) {
+        for (int j = 0; j < max; j++) {
+            if (buffer[i][j]) {
+                painter.setPen(paint_col);
+            }
+            else {
+                painter.setPen(bg);
+            }
+            painter.drawPoint(j, i);
+        }
+    }
+}
 
-    return (double) clk / CLOCKS_PER_SEC;
+double polygon::paint_time(QImage *image, size_t th_count)
+{
+    QImage img = QImage(image->size(), QImage::Format_RGBA64);
+    QPainter painter(&img);
+
+    int n = 50;
+    qDebug() << th_count;
+    clock_t clk;
+
+    if (!th_count) {
+        clk = clock();
+        for (int i = 0; i < n; i++) {
+            base(painter, &img, QColor(0, 0, 0));
+        }
+        clk = clock() - clk;
+    }
+    else {
+        clk = clock();
+        for (int i = 0; i < n; i++) {
+            paint(painter, &img, QColor(0, 0, 0), th_count);
+        }
+        clk = clock() - clk;
+    }
+
+    return (double) clk / CLOCKS_PER_SEC / n;
 }
 
 void polygon::add_point(point *point, bool hor, bool ver)

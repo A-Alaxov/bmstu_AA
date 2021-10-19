@@ -48,7 +48,7 @@ void canvas::redraw()
             p->draw(painter);
 
         for (polygon * p : shapes)
-            p->paint(painter, image, delay, this, bg, 16);
+            p->paint(painter, image, bg, 16);
     }
 
     for(polygon *p : shapes)
@@ -110,11 +110,6 @@ void canvas::add_hole()
     redraw();
 }
 
-void canvas::set_delay(size_t delay)
-{
-    this->delay = delay;
-}
-
 void canvas::set_hor()
 {
     vertical = false;
@@ -136,9 +131,7 @@ void canvas::clear()
     redraw();
 }
 
-void canvas::get_time(double &time)
+void canvas::get_time(double &time, size_t th_count, polygon *pol)
 {
-    time = 0;
-    for (polygon *p : shapes)
-        time += p->paint_time(image);
+    time = pol->paint_time(image, th_count);
 }

@@ -32,20 +32,23 @@ public:
     ~polygon() = default;
 
     void draw(QPainter &painter) const;
-    void paint(QPainter &painter, QImage *image, size_t delay, QWidget *widget, QColor bg, size_t th_count);
-    void base(QPainter &painter, QImage *image, size_t delay, QWidget *widget, QColor bg);
+    void paint(QPainter &painter, QImage *image, QColor bg, size_t th_count);
+    void base(QPainter &painter, QImage *image, QColor bg);
     void close();
 
     void add_point(point *point, bool hor, bool ver);
     void add_hole();
 
-    double paint_time(QImage *image);
+    double paint_time(QImage *image, size_t th_count);
 
 private:
+    typedef std::vector<std::vector<bool>> matrix;
     void find_max(int &max) const;
-    static void paint_sleep(size_t delay);
-    void draw_line(int x, int y, int max, QPainter &painter, QImage *image, QColor bg);
-    void edges_proc(QPainter &painter, QImage *image, size_t delay, QWidget *widget, QColor bg, size_t start, size_t end, int max);
+    void find_min(int &min) const;
+    void find_up(int &up) const;
+    void find_down(int &down) const;
+    void draw_line(int x, int y, int max, QImage *image, QColor bg, matrix &buffer);
+    void edges_proc(QImage *image, QColor bg, size_t start, size_t end, int max, matrix &buffer);
 
     bool new_edge = false;
     size_t start_pos = 0;
