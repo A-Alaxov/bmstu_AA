@@ -48,7 +48,7 @@ void canvas::redraw()
             p->draw(painter);
 
         for (polygon * p : shapes)
-            p->paint(painter, image, bg, 16);
+            p->paint(painter, bg, 16);
     }
 
     for(polygon *p : shapes)
