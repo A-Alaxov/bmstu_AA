@@ -1,12 +1,10 @@
 #ifndef INC_01_STRING_GEN_HPP
 #define INC_01_STRING_GEN_HPP
 
-typedef void (*gen_func_t)(int, int*);
+#include "algorithms.hpp"
 
-void gen_best_case(int len, int *arr);
+void matr_gen(matrix &matr, int n, int m, int lim);
 
-void gen_normal_case(int len, int *arr);
-
-void gen_worst_case(int len, int *arr);
+int prepare(matrix &result, int n1, int m1, int n2, int m2);
 
 #endif

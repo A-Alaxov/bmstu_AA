@@ -2,8 +2,8 @@
 #define INC_01_TIME_COMPARE_HPP
 
 #include "arr_gen.hpp"
-#include "algorithms.hpp"
+#include "sorts.hpp"
 
-void time_compare(int init);
+void time_compare(gen_func_t gen_func);
 
 #endif
