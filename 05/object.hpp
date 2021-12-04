@@ -36,9 +36,12 @@ public:
         this->time = time;
     }
 
-    void caesar();
-    void upper_lower();
-    void reverse();
+    void to_words();
+    void numbers();
+    void maximum();
+
+    string get_str() { return str; };
+    int get_max() { return maxim; };
 
     int task_num;
     clock_t time;

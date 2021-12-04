@@ -19,43 +19,53 @@ string generate() {
     return s;
 }
 
-void create_log(clock_t time1, clock_t time2, int n, Timer timer){
-    FILE *f;
-    f = fopen("../log.txt", "w");
+void create_log(clock_t time1, clock_t time2, int n, Timer timer, vector<Object> res1, vector<Object> res2){
+    FILE *f, *fres;
+    f = fopen("../log.csv", "w");
+    fres = fopen("../res.txt", "w");
     timer.calculate();
 
-    fprintf(f,"%7s|", "Конв. №");
-    fprintf(f,"%8s|", "Задача №");
-    fprintf(f, "%s|", "Постановки в очередь");
-    fprintf(f, "%s|", "Ожидания в очереди");
-    fprintf(f, "%s|", "Начала обработки");
-    fprintf(f, "%s|", "Обработки");
-    fprintf(f, "%s|", "Окончания обработки");
-    fprintf(f, "%s|", "Мин. ожидания в очереди");
-    fprintf(f, "%s|", "Макс. ожидания в очереди");
-    fprintf(f, "%s|", "Сред/ ожидания в очереди");
-    fprintf(f, "%s|\n", "Выполнения");
-
+    fprintf(f,"%s,", "Conv");
+    fprintf(f,"%s,", "Task");
+    fprintf(f, "%s,", "QueueEntry");
+    fprintf(f, "%s,", "Queue_wait");
+    fprintf(f, "%s,", "Processing_start");
+    fprintf(f, "%s,", "Processing");
+    fprintf(f, "%s,", "ProcessingEnd");
+    fprintf(f, "%s,", "Min_queue_wait");
+    fprintf(f, "%s,", "Max_queue_wait");
+    fprintf(f, "%s,", "Avg_queue_wait");
+    fprintf(f, "%s,\n", "     Total");
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < 3; j++) {
-            fprintf(f,"%7d|", j + 1);
-            fprintf(f,"%8d|", i + 1);
-            fprintf(f, "%20lf|", (double) timer.get_time_from_start()[i][j * 2] / CLOCKS_PER_SEC);
-            fprintf(f, "%18lf|", (double) timer.get_waiting_times()[i][j] / CLOCKS_PER_SEC);
-            fprintf(f, "%16lf|", (double) timer.get_time_from_start()[i][j * 2 + 1] / CLOCKS_PER_SEC);
-            fprintf(f, "%9lf|", (double) timer.get_working_times()[i][j] / CLOCKS_PER_SEC);
+            fprintf(f,"%4d,", j + 1);
+            fprintf(f,"%4d,", i + 1);
+            fprintf(f, "%11lf,", (double) timer.get_time_from_start()[i][j * 2] / CLOCKS_PER_SEC);
+            fprintf(f, "%10lf,", (double) timer.get_waiting_times()[i][j] / CLOCKS_PER_SEC);
+            fprintf(f, "%16lf,", (double) timer.get_time_from_start()[i][j * 2 + 1] / CLOCKS_PER_SEC);
+            fprintf(f, "%10lf,", (double) timer.get_working_times()[i][j] / CLOCKS_PER_SEC);
 
-            fprintf(f, "%19lf|", (double) timer.get_time_from_start()[i][6] / CLOCKS_PER_SEC);
-            fprintf(f, "%23lf|", (double) timer.get_min_time()[i] / CLOCKS_PER_SEC);
-            fprintf(f, "%24lf|", (double) timer.get_max_time()[i] / CLOCKS_PER_SEC);
-            fprintf(f, "%24lf|", timer.get_avg_time()[i]);
-            fprintf(f, "%10lf|\n", (double) timer.get_proc_time()[i] / CLOCKS_PER_SEC);
+            fprintf(f, "%14lf,", (double) timer.get_time_from_start()[i][6] / CLOCKS_PER_SEC);
+            fprintf(f, "%14lf,", (double) timer.get_min_time()[i] / CLOCKS_PER_SEC);
+            fprintf(f, "%14lf,", (double) timer.get_max_time()[i] / CLOCKS_PER_SEC);
+            fprintf(f, "%14lf,", timer.get_avg_time()[i]);
+            fprintf(f, "%10lf,\n", (double) timer.get_proc_time()[i] / CLOCKS_PER_SEC);
         }
     }
-
     fprintf(stdout, "Time with conveyor: %lf\n", (double) time1 / CLOCKS_PER_SEC);
     fprintf(stdout, "Time without conveyor: %lf\n", (double) time2 / CLOCKS_PER_SEC);
     fclose(f);
+
+    for (int i = 0; i < n; i++) {
+        fprintf(fres,"%s,", "Задача №   ");
+        fprintf(fres,"%5d,", i + 1);
+        fprintf(fres,"%s,", "Результат с конвейером  ");
+        fprintf(fres,"%10d,", res1[i].get_max());
+        fprintf(fres,"%s,", "Результат без конвейера ");
+        fprintf(fres,"%10d,", res2[i].get_max());
+        fprintf(fres,"%s:\n", "Строка");
+        fprintf(fres,"%s\n-------------------------------------------------------------------------------------\n", res1[i].get_str().c_str());
+    }
 }
 
 int main(){
@@ -85,13 +95,13 @@ int main(){
 
     for (int i = 0; i < n; i++) {
         Object cur_obj = Object(objvec[i], i, clock());
-        cur_obj.caesar();
-        cur_obj.upper_lower();
-        cur_obj.reverse();
+        cur_obj.to_words();
+        cur_obj.numbers();
+        cur_obj.maximum();
         res.push_back(cur_obj);
     }
 
-    create_log(time, clock() - start_t, n, conv.get_timer());
+    create_log(time, clock() - start_t, n, conv.get_timer(), conv.get_res(), res);
 
     return 0;
 }

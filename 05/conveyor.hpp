@@ -8,11 +8,12 @@
 
 class conveyor {
 public:
-    conveyor(int n) : n(n) {};
+    explicit conveyor(int n) : n(n) {};
 
     clock_t process(vector<string> objvec);
 
-    Timer get_timer();
+    Timer get_timer() { return timer; };
+    vector<Object> get_res() { return res; };
 
 private:
     void first_conv();

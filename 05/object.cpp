@@ -1,6 +1,6 @@
 #include "object.hpp"
 
-void Object::caesar() {
+void Object::to_words() {
     stringstream ss;
     ss << str;
 
@@ -14,7 +14,7 @@ void Object::caesar() {
     }
 }
 
-void Object::upper_lower() {
+void Object::numbers() {
     int found;
     for (auto word : words) {
         if (stringstream(word) >> found)
@@ -22,7 +22,11 @@ void Object::upper_lower() {
     }
 }
 
-void Object::reverse() {
+void Object::maximum() {
+    if (numbs.empty()) {
+        maxim = 0;
+        return;
+    }
     maxim = numbs[0];
     for (auto numb : numbs) {
         maxim = max(maxim, numb);

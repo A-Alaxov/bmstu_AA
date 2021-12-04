@@ -18,7 +18,7 @@ void conveyor::first_conv() {
 
         clock_t cur_time = clock();
         m1.unlock();
-        cur_obj.caesar();
+        cur_obj.to_words();
         m2.lock();
         timer.add_time_from_start(clock() - start_t, cur_obj.task_num);
         timer.add_time(0, clock() - cur_time, cur_obj.task_num);
@@ -46,7 +46,7 @@ void conveyor::second_conv() {
 
         clock_t cur_time = clock();
         m2.unlock();
-        cur_obj.upper_lower();
+        cur_obj.numbers();
         m3.lock();
         timer.add_time_from_start(clock() - start_t, cur_obj.task_num);
         timer.add_time(0, clock() - cur_time, cur_obj.task_num);
@@ -74,7 +74,7 @@ void conveyor::third_conv() {
 
         clock_t cur_time = clock();
         m3.unlock();
-        cur_obj.reverse();
+        cur_obj.maximum();
         resm.lock();
         timer.add_time_from_start(clock() - start_t, cur_obj.task_num);
         timer.add_time(0, clock() - cur_time, cur_obj.task_num);
@@ -105,8 +105,4 @@ clock_t conveyor::process(vector<string> objvec) {
     t3.join();
 
     return start_t;
-}
-
-Timer conveyor::get_timer() {
-    return timer;
 }
