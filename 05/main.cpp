@@ -12,7 +12,7 @@ string generate() {
     int code = 0;
     int min_low = 48;
     int max_low = 90;
-    for (int i = 0; i < 1000000; i++){
+    for (int i = 0; i < 2000000; i++){
         code = get_random_number(min_low, max_low);
         s.push_back(code);
     }
@@ -68,31 +68,7 @@ void create_log(clock_t time1, clock_t time2, int n, Timer timer, vector<Object>
     }
 }
 
-int main(){
-    srand(time(nullptr));
-    cout << "Enter strings count: ";
-    int n;
-    cin >> n;
-    if (n <= 0){
-        cout << "Incorrect";
-        return -1;
-    }
-
-    vector<Object> res;
-    vector<string> objvec;
-    objvec.resize(n);
-
-    for (int i = 0; i < n; i++){
-        string s = generate();
-        objvec[i] = (s);
-    }
-
-    conveyor conv(n);
-
-    clock_t start_t = conv.process(objvec);
-    clock_t time = clock() - start_t;
-    start_t = clock();
-
+void process(vector<Object> res, vector<string> objvec, int n) {
     for (int i = 0; i < n; i++) {
         Object cur_obj = Object(objvec[i], i, clock());
         cur_obj.to_words();
@@ -100,8 +76,75 @@ int main(){
         cur_obj.maximum();
         res.push_back(cur_obj);
     }
+}
 
-    create_log(time, clock() - start_t, n, conv.get_timer(), conv.get_res(), res);
+int main() {
+    srand(time(nullptr));
+
+    cout << "Enter 1 to get statistics, anything else to test: ";
+    int test;
+    cin >> test;
+
+    if (test != 1) {
+        cout << "Enter strings count: ";
+        int n;
+        cin >> n;
+        if (n <= 0) {
+            cout << "Incorrect";
+            return -1;
+        }
+
+        vector<Object> res;
+        vector<string> objvec;
+        objvec.resize(n);
+
+        for (int i = 0; i < n; i++) {
+            string s = generate();
+            objvec[i] = (s);
+        }
+
+        conveyor conv(n);
+
+        clock_t start_t = conv.process(objvec);
+        clock_t time = clock() - start_t;
+        start_t = clock();
+
+        process(res, objvec, n);
+
+        create_log(time, clock() - start_t, n, conv.get_timer(), conv.get_res(), res);
+    }
+    else {
+        FILE *f, *fres;
+        f = fopen("../stat.csv", "w");
+
+        fprintf(f,"%s,", "Tasks");
+        fprintf(f,"%s,", "NormalTime");
+        fprintf(f,"%s,\n", "ConveyorTime");
+        for (int n = 5; n < 16; n++) {
+            vector<Object> res;
+            vector<string> objvec;
+            objvec.resize(n);
+
+            for (int i = 0; i < n; i++) {
+                string s = generate();
+                objvec[i] = (s);
+            }
+
+            conveyor conv(n);
+
+            clock_t start_t = conv.process(objvec);
+            clock_t time = clock() - start_t;
+            start_t = clock();
+
+            process(res, objvec, n);
+
+            clock_t time2 = clock() - start_t;
+
+            fprintf(f,"%5d,", n);
+            fprintf(f, "%11lf,", (double) time / CLOCKS_PER_SEC);
+            fprintf(f, "%13lf,\n", (double) time2 / CLOCKS_PER_SEC);
+        }
+    }
 
     return 0;
 }
